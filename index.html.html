@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labdata Quiz - Introdução à IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #084734 0%, #0a5a3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #084734 0%, #0a5a3a 100%);
+            padding: 40px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .logo img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .header h1 {
+            color: #c3fa75;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #c3fa75;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-counter {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            color: #084734;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fafafa;
+        }
+
+        .option:hover {
+            border-color: #c3fa75;
+            background: #f5ffe0;
+        }
+
+        .option input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #084734;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 15px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .option input[type="radio"]:hover {
+            border-color: #c3fa75;
+            box-shadow: 0 0 0 3px rgba(195, 250, 117, 0.2);
+        }
+
+        .option input[type="radio"]:checked {
+            background: #c3fa75;
+            border-color: #c3fa75;
+            box-shadow: 0 0 0 3px rgba(195, 250, 117, 0.3);
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            color: #333;
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-prev {
+            background: transparent;
+            color: #084734;
+            border: 2px solid #084734;
+        }
+
+        .btn-prev:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-next {
+            background: #c3fa75;
+            color: #084734;
+            flex: 1;
+        }
+
+        .btn-next:hover {
+            background: #b8f066;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(195, 250, 117, 0.3);
+        }
+
+        .btn-next:disabled {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .result-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .result-score {
+            font-size: 48px;
+            color: #c3fa75;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .result-total {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .result-message {
+            font-size: 18px;
+            color: #084734;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            font-weight: 500;
+        }
+
+        .result-cta {
+            background: #084734;
+            color: #c3fa75;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        .result-cta:hover {
+            background: #0a5a3a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(8, 71, 52, 0.3);
+        }
+
+        .restart-btn {
+            background: #c3fa75;
+            color: #084734;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .restart-btn:hover {
+            background: #b8f066;
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 25px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+
+            .result-score {
+                font-size: 40px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-prev {
+                order: 2;
+            }
+
+            .btn-next {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="data:image/svg+xml,%3Csvg viewBox='0 0 800 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%23c3fa75;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23a8e85f;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='50%25' y='70%25' font-family='Arial, sans-serif' font-size='120' font-weight='bold' fill='url(%23grad)' text-anchor='middle'%3EFIA%3C/text%3E%3Ctext x='50%25' y='95%25' font-family='Arial, sans-serif' font-size='40' font-weight='600' fill='white' text-anchor='middle'%3ELabdata%3C/text%3E%3C/svg%3E" alt="FIA Labdata">
+            </div>
+            <h1>Desafio de IA</h1>
+            <p>Teste seus conhecimentos e concorra a prêmios</p>
+        </div>
+
+        <div class="content">
+            <div class="quiz-container active" id="quizContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="question-counter" id="questionCounter"></div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="button-group">
+                    <button class="btn btn-prev" id="prevBtn" style="display: none;">← Anterior</button>
+                    <button class="btn btn-next" id="nextBtn" disabled>Próxima →</button>
+                </div>
+            </div>
+
+            <div class="result-container" id="resultContainer">
+                <div class="result-icon" id="resultIcon"></div>
+                <div class="result-score" id="resultScore"></div>
+                <div class="result-total">de 21 questões</div>
+                <div class="result-message" id="resultMessage"></div>
+                <button class="btn result-cta restart-btn" id="restartBtn">Fazer o Quiz Novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questões do quiz (excluindo a questão 16)
+        const questions = [
+            {
+                id: 1,
+                text: "Qual destes é um exemplo de IA no seu dia a dia?",
+                options: [
+                    { text: "Jogo de tabuleiro", correct: false },
+                    { text: "Aplicativo de receitas", correct: false },
+                    { text: "Assistente virtual em smartphones", correct: true },
+                    { text: "Calculadora de bolso", correct: false }
+                ]
+            },
+            {
+                id: 2,
+                text: "A Inteligência Artificial existe desde os anos 1950?",
+                options: [
+                    { text: "Verdadeiro", correct: true },
+                    { text: "Falso", correct: false }
+                ]
+            },
+            {
+                id: 3,
+                text: "Qual é a diferença entre IA Fraca e IA Forte?",
+                options: [
+                    { text: "IA Fraca é mais barata; IA Forte é mais cara", correct: false },
+                    { text: "IA Fraca usa menos dados; IA Forte usa mais dados", correct: false },
+                    { text: "IA Fraca resolve tarefas específicas; IA Forte teria inteligência humana geral", correct: true },
+                    { text: "Não existe diferença, são termos iguais", correct: false }
+                ]
+            },
+            {
+                id: 4,
+                text: "Qual destes é um exemplo de IA no seu dia a dia?",
+                options: [
+                    { text: "Teclado digital", correct: false },
+                    { text: "Antivírus de computador", correct: false },
+                    { text: "Calculadora do Windows", correct: false },
+                    { text: "Recomendações do Netflix/YouTube", correct: true }
+                ]
+            },
+            {
+                id: 5,
+                text: "O que é Machine Learning (ML)?",
+                options: [
+                    { text: "Um tipo de robô inteligente", correct: false },
+                    { text: "Área da Inteligência Artificial onde computadores aprendem padrões através de dados", correct: true },
+                    { text: "Um algoritmo que resolve qualquer problema", correct: false },
+                    { text: "Um software que simula o cérebro humano", correct: false }
+                ]
+            },
+            {
+                id: 6,
+                text: "O que é Deep Learning (DL)?",
+                options: [
+                    { text: "Um tipo de ML que usa redes neurais com múltiplas camadas", correct: true },
+                    { text: "Quando você estuda IA muito profundamente", correct: false },
+                    { text: "Um algoritmo mais inteligente que Machine Learning", correct: false },
+                    { text: "A fusão entre IA e ciência de dados", correct: false }
+                ]
+            },
+            {
+                id: 7,
+                text: "IA pode estar funcionando 24/7 sem supervisão humana?",
+                options: [
+                    { text: "Verdadeiro", correct: true },
+                    { text: "Falso", correct: false }
+                ]
+            },
+            {
+                id: 8,
+                text: "Qual é o 'combustível' da Inteligência Artificial moderna?",
+                options: [
+                    { text: "Eletricidade", correct: false },
+                    { text: "Dados de qualidade em grande volume", correct: true },
+                    { text: "Criatividade humana", correct: false },
+                    { text: "Código de programação", correct: false }
+                ]
+            },
+            {
+                id: 9,
+                text: "Qual tecnologia está por trás do ChatGPT?",
+                options: [
+                    { text: "Machine Learning tradicional", correct: false },
+                    { text: "Deep Learning com modelos de linguagem", correct: true },
+                    { text: "Processamento de dados em Excel", correct: false },
+                    { text: "Inteligência Artificial Forte", correct: false }
+                ]
+            },
+            {
+                id: 10,
+                text: "Um algoritmo de IA sempre toma decisões mais justas que um humano?",
+                options: [
+                    { text: "Verdadeiro", correct: false },
+                    { text: "Falso", correct: true }
+                ]
+            },
+            {
+                id: 11,
+                text: "Qual é a aplicação mais comum de IA HOJE em dia?",
+                options: [
+                    { text: "Carros autônomos", correct: false },
+                    { text: "Robôs humanoides", correct: false },
+                    { text: "Tradução automática em tempo real", correct: false },
+                    { text: "Recomendação de produtos e conteúdo", correct: true }
+                ]
+            },
+            {
+                id: 12,
+                text: "Qual é o principal desafio ético em Inteligência Artificial?",
+                options: [
+                    { text: "Seu alto custo de desenvolvimento", correct: false },
+                    { text: "Falta de profissionais qualificados", correct: false },
+                    { text: "Possível viés algorítmico e impacto em decisões humanas (emprego, crédito, justiça)", correct: true },
+                    { text: "Computadores muito lentos", correct: false }
+                ]
+            },
+            {
+                id: 13,
+                text: "Redes Neurais Artificiais são fisicamente iguais ao cérebro humano?",
+                options: [
+                    { text: "Verdadeiro", correct: false },
+                    { text: "Falso", correct: true }
+                ]
+            },
+            {
+                id: 14,
+                text: "Em qual destes setores a IA está transformando mais a realidade AGORA?",
+                options: [
+                    { text: "Empresas muito grandes (Fortune 500)", correct: false },
+                    { text: "Apenas em tecnologia e startups", correct: false },
+                    { text: "Agricultura, saúde, finanças e varejo", correct: true },
+                    { text: "Principalmente em educação", correct: false }
+                ]
+            },
+            {
+                id: 15,
+                text: "Qual é uma preocupação realista sobre o futuro da IA?",
+                options: [
+                    { text: "IA vai estragar nossos alimentos", correct: false },
+                    { text: "IA vai proibir a navegação em diversos sites", correct: false },
+                    { text: "Criar bombas biológicas com a IA", correct: false },
+                    { text: "Substituição de certos empregos por IA", correct: true }
+                ]
+            },
+            {
+                id: 17,
+                text: "IA é algo que só profissionais técnicos precisam saber?",
+                options: [
+                    { text: "Verdadeiro", correct: false },
+                    { text: "Falso", correct: true }
+                ]
+            },
+            {
+                id: 18,
+                text: "De acordo com estudos recentes, qual será o maior impacto da IA nos próximos 5 anos?",
+                options: [
+                    { text: "IA vai substituir completamente o trabalho humano", correct: false },
+                    { text: "IA vai amplificar a produtividade em praticamente todos os setores, criando novos tipos de trabalho", correct: true },
+                    { text: "IA vai impactar apenas empresas de tecnologia", correct: false },
+                    { text: "IA não terá impacto significativo fora do setor de tech", correct: false }
+                ]
+            },
+            {
+                id: 19,
+                text: "Uma formação sólida em Introdução a IA, Ciência de Dados e Engenharia de Dados pode abrir oportunidades de carreira e desenvolvimento profissional em praticamente qualquer setor?",
+                options: [
+                    { text: "Verdadeiro", correct: true },
+                    { text: "Falso", correct: false }
+                ]
+            },
+            {
+                id: 20,
+                text: "Para estar preparado para o mercado de trabalho do futuro, qual competência é fundamental?",
+                options: [
+                    { text: "Memorizar toda a teoria de Machine Learning", correct: false },
+                    { text: "Saber usar uma única ferramenta de IA", correct: false },
+                    { text: "Entender como IA funciona e como usá-la na sua área de trabalho", correct: true },
+                    { text: "Aprender apenas programação", correct: false }
+                ]
+            },
+            {
+                id: 21,
+                text: "Qual é a profissão mais demandada no mercado de tecnologia atualmente?",
+                allowMultiple: true,
+                options: [
+                    { text: "Programador de aplicativos mobile", correct: false },
+                    { text: "Especialista em Ciência de Dados e IA", correct: true },
+                    { text: "Webdesigner", correct: false },
+                    { text: "Especialista em Engenharia de Dados", correct: true }
+                ]
+            },
+            {
+                id: 22,
+                text: "9 em cada 10 alunos formados na FIA Business School - Labdata são promovidos ou mudam de emprego",
+                options: [
+                    { text: "Verdadeiro", correct: true },
+                    { text: "Falso", correct: false }
+                ]
+            }
+        ];
+
+        // Mensagens de apoio baseadas em desempenho
+        const resultMessages = {
+            0: { icon: "😕", message: "Que pena! Você acertou pouquíssimas questões. Não desista! A IA é um campo fascinante e tem muito a aprender. Conheça nossos cursos e comece sua jornada!" },
+            1: { icon: "😔", message: "Você ainda tem caminho a percorrer! Mas o primeiro passo é sempre importante. Explore nossos cursos de Introdução à IA e amplie seus conhecimentos." },
+            3: { icon: "😐", message: "Resultado abaixo da média, mas há esperança! Você entende alguns conceitos básicos. Vamos aprofundar isso com nossa formação especializada?" },
+            5: { icon: "🙂", message: "Resultado mediano! Você está no caminho certo, mas precisa consolidar seus conhecimentos. Nossos cursos vão ajudar a preencher essas lacunas." },
+            7: { icon: "😊", message: "Bom resultado! Você já entende bastante sobre IA. Que tal levar seus conhecimentos para o próximo nível com nossos programas avançados?" },
+            9: { icon: "😄", message: "Excelente! Você domina os conceitos fundamentais de IA. Está pronto para especializações em Ciência de Dados ou Engenharia de Dados!" },
+            10: { icon: "🎉", message: "Perfeito! Você é um conhecedor de IA! Parabéns pelos acertos. Você tem tudo para se tornar um especialista. Vem com a gente!" }
+        };
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+
+        function initQuiz() {
+            renderQuestion();
+            updateProgress();
+        }
+
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionCounter').textContent = `Questão ${currentQuestion + 1} de ${questions.length}`;
+            document.getElementById('questionText').textContent = question.text;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            // Se a questão permite múltiplas respostas, mostra aviso
+            if (question.allowMultiple) {
+                const hint = document.createElement('div');
+                hint.style.cssText = 'font-size: 12px; color: #666; margin-bottom: 15px; font-style: italic; background: #f5ffe0; padding: 10px; border-radius: 6px; border-left: 3px solid #c3fa75;';
+                hint.textContent = '💡 Essa questão permite múltiplas respostas. Selecione todas as opções corretas.';
+                optionsContainer.appendChild(hint);
+            }
+
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+
+                const input = document.createElement('input');
+                input.type = question.allowMultiple ? 'checkbox' : 'radio';
+                input.name = `question-${currentQuestion}`;
+                input.value = index;
+                
+                if (question.allowMultiple) {
+                    // Para checkboxes, verifica se esse índice está no array de respostas
+                    if (Array.isArray(answers[currentQuestion])) {
+                        input.checked = answers[currentQuestion].includes(index);
+                    }
+                    input.addEventListener('change', () => selectAnswerMultiple(index));
+                } else {
+                    // Para radio buttons (normal)
+                    input.checked = answers[currentQuestion] === index;
+                    input.addEventListener('change', () => selectAnswer(index));
+                }
+
+                const label = document.createElement('label');
+                label.textContent = option.text;
+
+                optionDiv.appendChild(input);
+                optionDiv.appendChild(label);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            updateNavigation();
+        }
+
+        function selectAnswer(index) {
+            answers[currentQuestion] = index;
+            document.getElementById('nextBtn').disabled = false;
+            updateProgress();
+        }
+
+        function selectAnswerMultiple(index) {
+            // Inicializa array se não existir
+            if (!Array.isArray(answers[currentQuestion])) {
+                answers[currentQuestion] = [];
+            }
+            
+            // Toggle do índice no array
+            const position = answers[currentQuestion].indexOf(index);
+            if (position > -1) {
+                answers[currentQuestion].splice(position, 1);
+            } else {
+                answers[currentQuestion].push(index);
+            }
+            
+            document.getElementById('nextBtn').disabled = answers[currentQuestion].length === 0;
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const question = questions[currentQuestion];
+
+            prevBtn.style.display = currentQuestion > 0 ? 'block' : 'none';
+            
+            // Para questões com múltiplas respostas
+            if (question.allowMultiple) {
+                nextBtn.disabled = !Array.isArray(answers[currentQuestion]) || answers[currentQuestion].length === 0;
+            } else {
+                // Para questões normais
+                nextBtn.disabled = answers[currentQuestion] === null;
+            }
+            
+            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Enviar Respostas' : 'Próxima →';
+        }
+
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const correctAnswers = answers.filter((answer, index) => {
+                const question = questions[index];
+                
+                // Se é uma questão com múltiplas respostas corretas
+                if (question.allowMultiple) {
+                    if (!Array.isArray(answer) || answer.length === 0) {
+                        return false;
+                    }
+                    
+                    // Pega todas as respostas corretas
+                    const correctIndices = question.options
+                        .map((opt, idx) => opt.correct ? idx : -1)
+                        .filter(idx => idx !== -1);
+                    
+                    // Verifica se selecionou exatamente as respostas corretas
+                    return answer.length === correctIndices.length && 
+                           answer.every(idx => question.options[idx].correct);
+                }
+                
+                // Lógica normal para questões com resposta única
+                return answer !== null && question.options[answer].correct;
+            }).length;
+
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultContainer').classList.add('active');
+
+            document.getElementById('resultScore').textContent = correctAnswers;
+            
+            let messageKey = 0;
+            if (correctAnswers <= 3) messageKey = 1;
+            else if (correctAnswers <= 5) messageKey = 3;
+            else if (correctAnswers <= 7) messageKey = 5;
+            else if (correctAnswers <= 9) messageKey = 7;
+            else if (correctAnswers <= 10) messageKey = 9;
+            else messageKey = 10;
+
+            const resultMsg = resultMessages[messageKey];
+            document.getElementById('resultIcon').textContent = resultMsg.icon;
+            document.getElementById('resultMessage').textContent = resultMsg.message;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = new Array(questions.length).fill(null);
+            document.getElementById('quizContainer').classList.add('active');
+            document.getElementById('resultContainer').classList.remove('active');
+            renderQuestion();
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', previousQuestion);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('restartBtn').addEventListener('click', restartQuiz);
+
+        initQuiz();
+    </script>
+</body>
+</html>
