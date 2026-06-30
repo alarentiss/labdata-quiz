@@ -545,9 +545,9 @@
         const resultMessages = {
             0: { icon: "😕", message: "Que pena, mas não desista! A IA é um campo fascinante e tem muito a aprender. Conheça nossos cursos e comece sua jornada!" },
             1: { icon: "😔", message: "Você ainda tem caminho a percorrer! Mas o primeiro passo é sempre importante. Explore nossos cursos de Introdução à IA e amplie seus conhecimentos." },
-            3: { icon: "😐", message: "Resultado abaixo da média, mas há esperança! Você entende alguns conceitos básicos. Vamos aprofundar isso com nossa formação especializada?" },
-            5: { icon: "🙂", message: "Resultado mediano! Você está no caminho certo, mas precisa consolidar seus conhecimentos. Nossos cursos vão ajudar a preencher essas lacunas." },
-            7: { icon: "😊", message: "Bom resultado! Você já entende bastante sobre IA. Que tal levar seus conhecimentos para o próximo nível com nossos programas avançados?" },
+            3: { icon: "😐", message: "Ainda dá para melhorar! Você entende alguns conceitos básicos. Vamos aprofundar isso com nossas formações especializadas?" },
+            5: { icon: "🙂", message: "Você está no caminho certo! Só precisa consolidar seus conhecimentos. Nossos cursos vão ajudar a preencher essas lacunas." },
+            7: { icon: "😊", message: "Parabéns! Você já entende bastante sobre IA. Que tal levar seus conhecimentos para o próximo nível com nossos programas avançados?" },
             9: { icon: "😄", message: "Excelente! Você domina os conceitos fundamentais de IA. Está pronto para especializações em Ciência de Dados ou Engenharia de Dados!" },
            
         };
@@ -700,7 +700,7 @@
 
             document.getElementById('resultScore').textContent = correctAnswers;
             
-            let messageKey = 1;
+            let messageKey = 0;
             if (correctAnswers <= 6) messageKey = 3;
             else if (correctAnswers <= 13) messageKey = 5;
             else if (correctAnswers <= 19) messageKey = 7;
