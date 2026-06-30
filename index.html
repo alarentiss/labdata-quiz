@@ -543,13 +543,13 @@
 
         // Mensagens de apoio baseadas em desempenho
         const resultMessages = {
-            0: { icon: "😕", message: "Que pena! Você acertou pouquíssimas questões. Não desista! A IA é um campo fascinante e tem muito a aprender. Conheça nossos cursos e comece sua jornada!" },
+            0: { icon: "😕", message: "Que pena, mas não desista! A IA é um campo fascinante e tem muito a aprender. Conheça nossos cursos e comece sua jornada!" },
             1: { icon: "😔", message: "Você ainda tem caminho a percorrer! Mas o primeiro passo é sempre importante. Explore nossos cursos de Introdução à IA e amplie seus conhecimentos." },
             3: { icon: "😐", message: "Resultado abaixo da média, mas há esperança! Você entende alguns conceitos básicos. Vamos aprofundar isso com nossa formação especializada?" },
             5: { icon: "🙂", message: "Resultado mediano! Você está no caminho certo, mas precisa consolidar seus conhecimentos. Nossos cursos vão ajudar a preencher essas lacunas." },
             7: { icon: "😊", message: "Bom resultado! Você já entende bastante sobre IA. Que tal levar seus conhecimentos para o próximo nível com nossos programas avançados?" },
             9: { icon: "😄", message: "Excelente! Você domina os conceitos fundamentais de IA. Está pronto para especializações em Ciência de Dados ou Engenharia de Dados!" },
-            10: { icon: "🎉", message: "Perfeito! Você é um conhecedor de IA! Parabéns pelos acertos. Você tem tudo para se tornar um especialista. Vem com a gente!" }
+           
         };
 
         let currentQuestion = 0;
@@ -700,13 +700,11 @@
 
             document.getElementById('resultScore').textContent = correctAnswers;
             
-            let messageKey = 0;
-            if (correctAnswers <= 3) messageKey = 1;
-            else if (correctAnswers <= 5) messageKey = 3;
-            else if (correctAnswers <= 7) messageKey = 5;
-            else if (correctAnswers <= 9) messageKey = 7;
-            else if (correctAnswers <= 10) messageKey = 9;
-            else messageKey = 10;
+            let messageKey = 1;
+            if (correctAnswers <= 6) messageKey = 3;
+            else if (correctAnswers <= 13) messageKey = 5;
+            else if (correctAnswers <= 19) messageKey = 7;
+            else messageKey = 9;
 
             const resultMsg = resultMessages[messageKey];
             document.getElementById('resultIcon').textContent = resultMsg.icon;
